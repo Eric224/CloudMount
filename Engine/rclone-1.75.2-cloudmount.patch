@@ -1,0 +1,172 @@
+--- a/backend/drime/api/types.go
++++ b/backend/drime/api/types.go
+@@ -103,7 +103,8 @@
+ 
+ // Error is returned from drime when things go wrong
+ type Error struct {
+-	Message string `json:"message"`
++	Message    string `json:"message"`
++	StatusCode int    `json:"-"`
+ }
+ 
+ // Error returns a string for the error and satisfies the error interface
+--- a/backend/drime/drime.go
++++ b/backend/drime/drime.go
+@@ -345,6 +345,7 @@
+ 	if errResponse.Message == "" {
+ 		errResponse.Message = fmt.Sprintf("%s (%d): %s", resp.Status, resp.StatusCode, string(body))
+ 	}
++	errResponse.StatusCode = resp.StatusCode
+ 	return errResponse
+ }
+ 
+@@ -720,11 +721,6 @@
+ 		return shouldRetry(ctx, resp, err)
+ 	})
+ 	if err != nil {
+-		// If Drime returns 422 with invalid entry ID, the object is already gone.
+-		// Map this to a standard not-found error
+-		if strings.Contains(err.Error(), "entry ids is invalid") {
+-			return fs.ErrorObjectNotFound
+-		}
+ 		return fmt.Errorf("failed to delete item: %w", err)
+ 	}
+ 	// Check the individual result codes also
+@@ -1610,14 +1606,23 @@
+ 			if err != nil {
+ 				return
+ 			}
++			// Never delete a newly uploaded object if the service reused its ID.
++			if o.id == id {
++				return
++			}
+ 			fs.Debugf(o, "Removing old object on successful upload")
+ 			deleteErr := o.fs.deleteObject(ctx, id)
+ 			if deleteErr != nil {
+-				if errors.Is(deleteErr, fs.ErrorObjectNotFound) {
+-					fs.Debugf(o, "Old object already deleted, safely ignoring")
+-				} else {
+-					err = fmt.Errorf("failed to delete existing object: %w", deleteErr)
++				// Validation messages are localized using the account language.
++				// A 422 alone does not prove deletion: require a fresh successful
++				// directory listing, the new ID/name/size, and absence of the old ID.
++				var serviceError api.Error
++				if errors.As(deleteErr, &serviceError) && serviceError.StatusCode == http.StatusUnprocessableEntity &&
++					o.fs.confirmReplacement(ctx, id, o.id, directoryID, leaf, o.size) {
++					fs.Debugf(o, "Replacement confirmed; old object no longer exists")
++					return
+ 				}
++				err = fmt.Errorf("failed to delete existing object: %w", deleteErr)
+ 			}
+ 		}()
+ 	}
+@@ -1663,6 +1668,25 @@
+ 	return o.setMetaData(&result.FileEntry)
+ }
+ 
++// confirmReplacement fails closed on listing errors, missing/reused IDs, wrong
++// sizes, and old objects which still exist. It never deletes anything itself.
++func (f *Fs) confirmReplacement(ctx context.Context, oldID, newID, dirID, leaf string, size int64) bool {
++	if oldID == "" || newID == "" || oldID == newID || size < 0 {
++		return false
++	}
++	oldFound, newFound := false, false
++	_, err := f.listAll(ctx, dirID, false, true, "", func(item *api.Item) bool {
++		if item.ID.String() == oldID {
++			oldFound = true
++		}
++		if item.ID.String() == newID && item.Name == leaf && item.FileSize == size && item.IsDeleted == 0 && item.DeletedAt == nil {
++			newFound = true
++		}
++		return false // All pages are required to establish the old ID is absent.
++	})
++	return err == nil && !oldFound && newFound
++}
++
+ // Remove an object
+ func (o *Object) Remove(ctx context.Context) error {
+ 	return o.fs.deleteObject(ctx, o.id)
+--- /dev/null
++++ b/backend/drime/cloudmount_replacement_test.go
+@@ -0,0 +1,81 @@
++package drime
++
++import (
++	"context"
++	"encoding/json"
++	"errors"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/rclone/rclone/backend/drime/api"
++	"github.com/rclone/rclone/fs"
++	"github.com/rclone/rclone/lib/encoder"
++	"github.com/rclone/rclone/lib/pacer"
++	"github.com/rclone/rclone/lib/rest"
++)
++
++func TestCloudMountReplacementRequiresIndependentProof(t *testing.T) {
++	item := func(id, name string, size int64) api.Item {
++		return api.Item{ID: json.Number(id), Name: name, FileSize: size}
++	}
++	for _, tc := range []struct {
++		name   string
++		pages  [][]api.Item
++		status int
++		want   bool
++	}{
++		{"new visible old absent", [][]api.Item{{item("2", "file", 42)}}, 200, true},
++		{"old still visible", [][]api.Item{{item("1", "file", 30), item("2", "file", 42)}}, 200, false},
++		{"old on later page", [][]api.Item{{item("2", "file", 42)}, {item("1", "file", 30)}}, 200, false},
++		{"new on later page", [][]api.Item{{item("3", "other", 10)}, {item("2", "file", 42)}}, 200, true},
++		{"new missing", [][]api.Item{{}}, 200, false},
++		{"wrong size", [][]api.Item{{item("2", "file", 41)}}, 200, false},
++		{"wrong name", [][]api.Item{{item("2", "other", 42)}}, 200, false},
++		{"permission failure", nil, 403, false},
++		{"server failure", nil, 500, false},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++				if tc.status != 200 {
++					w.WriteHeader(tc.status)
++					_, _ = w.Write([]byte(`{"message":"service failure"}`))
++					return
++				}
++				page := 1
++				if r.URL.Query().Get("page") == "2" {
++					page = 2
++				}
++				_ = json.NewEncoder(w).Encode(api.Listing{CurrentPage: page, LastPage: len(tc.pages), Data: tc.pages[page-1]})
++			}))
++			defer server.Close()
++			ctx, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
++			defer cancel()
++			f := &Fs{srv: rest.NewClient(server.Client()).SetRoot(server.URL),
++				opt:   Options{ListChunk: 1000, Enc: encoder.Display},
++				pacer: fs.NewPacer(ctx, pacer.NewDefault(pacer.MinSleep(time.Millisecond), pacer.MaxSleep(time.Millisecond)))}
++			f.srv.SetErrorHandler(errorHandler)
++			if got := f.confirmReplacement(ctx, "1", "2", "parent", "file", 42); got != tc.want {
++				t.Fatalf("confirmation = %v, want %v", got, tc.want)
++			}
++			if f.confirmReplacement(ctx, "2", "2", "parent", "file", 42) {
++				t.Fatal("same ID cannot prove absence")
++			}
++		})
++	}
++}
++
++func TestCloudMountLocalizedValidationRetainsHTTPStatus(t *testing.T) {
++	for _, message := range []string{"所選的 entry ids 無效。", "The selected entry ids is invalid.", "Ausgewählte Einträge sind ungültig."} {
++		response := &http.Response{StatusCode: 422, Body: http.NoBody}
++		body, _ := json.Marshal(map[string]string{"message": message})
++		response.Body = io.NopCloser(strings.NewReader(string(body)))
++		var serviceError api.Error
++		if !errors.As(errorHandler(response), &serviceError) || serviceError.StatusCode != 422 || serviceError.Message != message {
++			t.Fatal("localized status lost")
++		}
++	}
++}

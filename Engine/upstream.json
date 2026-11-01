@@ -1,0 +1,12 @@
+{
+  "version": "1.75.2",
+  "url": "https://codeload.github.com/rclone/rclone/tar.gz/refs/tags/v1.75.2",
+  "sha256": "68afd7f68c84bd978966feae2116339aa7bf454b39c573910c462e87c3774d5a",
+  "engine_version": "v1.75.2-cloudmount.1",
+  "tags": [
+    "cmount"
+  ],
+  "go": "1.27.3",
+  "deployment_target": "13.0",
+  "engine_sha256": "e5f00bb4674620c91041357d34cf1f89a293a726135f1a94295f0d8b09dbc13b"
+}

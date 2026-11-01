@@ -1,0 +1,19 @@
+--minversion 0.63.1
+--exclude DerivedData
+
+# format options
+
+--closurevoid preserve
+--commas inline
+--ifdef no-indent
+--importgrouping testable-bottom
+--indent tab
+--self init-only
+--stripunusedargs closure-only
+--swiftversion 6.2
+--tabwidth 4
+
+# rules
+
+--enable isEmpty
+--disable redundantReturn,trailingClosures,wrapMultilineStatementBraces

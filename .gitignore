@@ -1,0 +1,15 @@
+.build/
+.swiftpm/
+.DS_Store
+CloudMount.app/
+dist/
+*.ipa
+*.dmg
+*.p12
+*.pfx
+*.mobileprovision
+*.xcuserstate
+xcuserdata/
+Resources/CloudMountRclone
+.env
+.env.*

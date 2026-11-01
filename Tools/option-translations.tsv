@@ -1,0 +1,421 @@
+2fa	雙重驗證碼
+access	存取方式
+access_scopes	允許的存取範圍
+access_tier	儲存存取層級
+account_id	帳戶識別碼
+acknowledge_abuse	允許下載被標記的檔案
+acl	存取權限規則
+action_policy	檔案操作選擇規則
+adjust_media_files_extensions	自動修正媒體副檔名
+allow_import_name_change	允許匯入時調整名稱
+allow_insecure_tls_ciphers	允許較舊的 TLS 加密方式
+alternate_export	使用替代匯出方式
+anonymous	匿名存取
+api_password	API 密碼
+api_url	API 服務網址
+app_id	應用程式識別碼
+app_token	應用程式權杖
+app_version	應用程式版本
+application_credential_id	應用程式憑證識別碼
+application_credential_name	應用程式憑證名稱
+application_credential_secret	應用程式憑證密鑰
+archive_tier_delete	允許刪除封存層檔案
+ask_password	連線時詢問密碼
+attempt_resume_upload	嘗試接續中斷的上傳
+auth_owner_only	只允許擁有者授權
+auth_redirect	授權完成後的返回網址
+auth_token	驗證權杖
+auth_version	驗證協定版本
+authorization	授權資訊
+authorization_expiry	授權到期時間
+auto_size	自動選擇檔案大小
+av_override	略過防毒掃描限制
+base_folder_uuid	起始資料夾識別碼
+batch_commit_timeout	批次提交逾時
+batch_mode	批次處理方式
+batch_size	每批處理數量
+batch_timeout	批次處理逾時
+bearer_token_command	取得存取權杖的指令
+blake3sum_command	計算 BLAKE3 校驗值的指令
+box_config_file	Box 設定檔
+box_sub_type	Box 帳戶類型
+bucket_acl	儲存桶存取權限
+bucket_object_lock_enabled	啟用儲存桶物件鎖定
+bucket_policy_only	僅使用儲存桶權限政策
+bypass_governance_retention	略過治理模式保留限制
+cache_time	快取保留時間
+case_insensitive	忽略名稱大小寫
+case_sensitive	區分名稱大小寫
+cdn	內容傳遞網路網址
+check_hash	檢查檔案校驗值
+chunk_clean_interval	分段暫存清理間隔
+chunk_no_memory	不在記憶體保留分段
+chunk_path	分段暫存位置
+chunk_size	每段傳輸大小
+chunk_total_size	分段總大小
+ciphers	允許的加密方式
+client_access_token	用戶端存取權杖
+client_certificate_password	用戶端憑證密碼
+client_certificate_path	用戶端憑證檔案
+client_credentials	用戶端登入憑證
+client_refresh_token	用戶端更新權杖
+client_salted_key_pass	用戶端金鑰保護密碼
+client_send_certificate_chain	傳送完整用戶端憑證鏈
+client_uid	用戶端識別碼
+close_timeout	關閉連線逾時
+commit_retries	提交失敗重試次數
+compartment	資源分區識別碼
+concurrency	同時處理數量
+config_credentials	設定檔中的登入資訊
+config_file	服務設定檔
+config_profile	設定檔中的設定組
+connection_retries	連線重試次數
+connection_string	連線資訊字串
+connections	同時連線數量
+cookies	網站登入 Cookie
+copy_concurrency	同時複製數量
+copy_cutoff	切換分段複製的檔案大小
+copy_is_hardlink	以硬連結代替複製
+copy_links	複製連結指向的內容
+copy_shortcut_content	複製捷徑指向的內容
+copy_timeout	複製操作逾時
+copy_total_concurrency	複製工作總並行數
+crc32sum_command	計算 CRC32 校驗值的指令
+create_library	自動建立資料庫
+create_policy	新檔案建立位置規則
+data_transfer_protection	資料傳輸保護方式
+db_path	本機資料庫位置
+db_purge	清理資料庫記錄
+db_wait_time	等待資料庫回應時間
+debug	啟用偵錯記錄
+decompress	自動解壓縮下載內容
+delete_snapshots	刪除檔案時處理快照
+deleted_id	已刪除項目識別碼
+delta	使用增量更新
+description	連線說明
+device_id	裝置識別碼
+directory_bucket	使用目錄儲存桶
+directory_markers	建立資料夾標記
+directory_name_encryption	加密資料夾名稱
+disable_checksum	停用校驗值檢查
+disable_concurrent_reads	停用同時讀取
+disable_concurrent_writes	停用同時寫入
+disable_epsv	停用延伸被動連線模式
+disable_fetching_member_count	不讀取成員數量
+disable_hashcheck	停用檔案雜湊檢查
+disable_http2	停用 HTTP/2
+disable_instance_discovery	停用服務執行個體探索
+disable_mlsd	停用標準化資料夾清單指令
+disable_site_permission	不讀取網站權限
+disable_tls13	停用 TLS 1.3
+disable_utf8	停用 UTF-8 檔名
+discard	捨棄寫入內容
+doi_resolver_api_url	DOI 解析服務網址
+download_auth_duration	下載授權有效時間
+download_url	自訂下載網址
+drive_type	磁碟類型
+effective_upload_time	使用有效上傳時間
+enable_caching	啟用快取
+encoding	檔名編碼方式
+endpoint_type	服務端點類型
+eventually_consistent_delay	等待遠端更新一致的時間
+export_formats	匯出檔案格式
+expose_onenote_files	顯示 OneNote 檔案
+fail_hard	遇到錯誤立即停止
+fast_list_bug_fix	修正快速清單相容問題
+fatal_if_no_space	空間不足時停止
+fetch_until_empty_page	讀取清單直到空白頁
+file_password	檔案密碼
+filename_encoding	加密檔名編碼方式
+filename_encryption	檔名加密方式
+folder_password	資料夾密碼
+force_list_hidden	強制顯示隱藏檔案
+force_path_style	使用路徑式儲存桶網址
+formats	允許的檔案格式
+front_endpoint	公開服務端點
+hard_delete	直接永久刪除
+hash_memory_limit	校驗值計算記憶體上限
+hash_type	校驗值演算法
+hashes	可用的校驗值類型
+headers	自訂 HTTP 標頭
+hide_special_share	隱藏特殊共用資料夾
+host_key_algorithms	允許的伺服器金鑰演算法
+host_keys	信任的伺服器金鑰
+hostname	伺服器主機名稱
+http_proxy	HTTP 代理伺服器
+ibm_api_key	IBM API 金鑰
+ibm_iam_endpoint	IBM 身分驗證服務網址
+ibm_resource_instance_id	IBM 資源執行個體識別碼
+idle_timeout	閒置連線逾時
+impersonate	代登入使用者
+impersonate_admin	代登入管理員
+import_formats	匯入檔案格式
+include_archived	包含已封存項目
+info_age	檔案資訊保留時間
+item_derive	自動產生檔案衍生版本
+item_metadata	項目中繼資料
+keep_revision_forever	永久保留檔案版本
+kerberos_ccache	Kerberos 憑證快取檔案
+key_exchange	金鑰交換演算法
+known_hosts_file	信任的 SSH 主機清單檔
+leave_parts_on_error	失敗時保留已上傳分段
+library	資料庫名稱
+library_key	資料庫存取金鑰
+lifecycle	檔案生命週期規則
+link_password	分享連結密碼
+link_scope	分享連結存取範圍
+link_type	分享連結類型
+links	連結處理方式
+list_chunk	每批列出項目數量
+list_folder_burst	資料夾清單短時間請求上限
+list_folder_limit	資料夾清單請求速率
+list_folder_window	資料夾清單限流時間範圍
+list_page_size	每頁清單項目數量
+list_parallelism	同時讀取清單數量
+list_url_encode	對清單中的網址編碼
+list_version	清單 API 版本
+list_versions_oldest_first	優先列出較舊版本
+location	儲存位置
+location_constraint	儲存區域限制
+macs	訊息驗證演算法
+mailbox_password	郵件信箱密碼
+master_key	主金鑰
+master_keys	主金鑰組
+max_age	最長保留時間
+max_stream_size	串流檔案大小上限
+max_upload_parts	上傳分段數量上限
+maximal_summary_chunk_size	摘要分段大小上限
+md5_memory_limit	MD5 計算記憶體上限
+md5sum_command	計算 MD5 校驗值的指令
+media_extensions	媒體檔案副檔名
+memory_pool_flush_time	記憶體池釋放間隔
+memory_pool_use_mmap	記憶體池使用檔案映射
+meta_format	中繼資料格式
+metadata_enforce_expansive_access	套用擴展存取權限
+metadata_labels	中繼資料標籤
+metadata_owner	檔案擁有者中繼資料
+metadata_permissions	檔案權限中繼資料
+metadata_restore_special_bits	還原特殊權限位元
+might_gzip	伺服器可能傳回 Gzip 內容
+min_free_space	最低保留可用空間
+minimal_chunk_size	最小分段大小
+mnemonic	助記詞
+mode	運作模式
+mountid	掛載識別碼
+msi_client_id	受控身分用戶端識別碼
+msi_mi_res_id	受控身分資源識別碼
+msi_object_id	受控身分物件識別碼
+name_format	名稱格式
+nextcloud_chunk_size	Nextcloud 上傳分段大小
+no_check_bucket	略過儲存桶檢查
+no_check_certificate	略過 HTTPS 憑證驗證
+no_check_container	略過容器檢查
+no_check_updated	略過更新結果檢查
+no_check_upload	略過上傳結果檢查
+no_chunk	停用分段傳輸
+no_clone	停用伺服器端複製
+no_data_encryption	停用檔案內容加密
+no_escape	不轉義特殊字元
+no_head	不使用 HTTP HEAD 檢查
+no_head_object	不使用物件 HEAD 檢查
+no_large_objects	停用大型物件
+no_media_link	不使用媒體連結
+no_preallocate	不預先配置檔案空間
+no_set_modtime	不設定修改時間
+no_slash	不在資料夾結尾加斜線
+no_sparse	停用稀疏檔案
+no_system_metadata	不讀寫系統中繼資料
+no_versions	不保留舊版本
+nounc	停用 UNC 路徑處理
+object_acl	物件存取權限
+object_lock_legal_hold_status	物件法律保留狀態
+object_lock_mode	物件鎖定模式
+object_lock_retain_until_date	物件鎖定保留到期日
+object_lock_set_after_upload	上傳後設定物件鎖定
+object_lock_supported	啟用物件鎖定支援
+one_file_system	限制在同一檔案系統
+only_signed	只允許已簽署的請求
+original_file_size	使用原始檔案大小
+otp_secret_key	一次性密碼密鑰
+owncloud_exclude_mounts	排除 ownCloud 外部掛載
+owncloud_exclude_shares	排除 ownCloud 共用項目
+owned_by	指定項目擁有者
+pacer_burst	短時間請求上限
+pacer_min_sleep	請求之間最短等待時間
+partial_page_fetch_threshold	部分頁面讀取門檻
+pass_bad_blocks	略過損壞的資料區塊
+path_override	覆寫預設路徑
+permanent_token	長期存取權杖
+pin_host_key	固定信任的伺服器金鑰
+plex_insecure	略過 Plex 憑證驗證
+plex_password	Plex 密碼
+plex_token	Plex 存取權杖
+plex_url	Plex 伺服器網址
+plex_username	Plex 使用者名稱
+private_access_key	私人存取金鑰
+profile	設定組名稱
+project_number	專案編號
+protocol	傳輸協定
+proxy	代理伺服器
+pubkey	公開金鑰
+pubkey_file	公開金鑰檔案
+public_access	公開存取權限
+quirks	服務相容性修正
+ram_cache_limit	記憶體快取上限
+read_only	唯讀存取
+read_retries	讀取重試次數
+read_size	每次讀取大小
+refresh_token	更新權杖
+replace_existing_draft	取代現有草稿
+requester_pays	由請求者支付傳輸費用
+resource_key	資源存取金鑰
+role_arn	IAM 角色 ARN
+role_external_id	角色外部識別碼
+role_session_duration	角色登入有效時間
+role_session_name	角色登入名稱
+root_folder_slug	根資料夾網址名稱
+root_id	根目錄識別碼
+root_namespace	根命名空間
+root_prefix	根路徑前綴
+rps	每秒請求上限
+sas_url	SAS 授權網址
+scope_access	授權存取範圍
+scope_role	授權角色
+sdk_log_mode	SDK 記錄模式
+search_policy	檔案搜尋規則
+server_command	伺服器端指令
+server_side_across_configs	允許跨設定伺服器端操作
+server_side_encryption	伺服器端加密方式
+service	服務名稱
+service_account_credentials	服務帳戶登入憑證
+service_account_file	服務帳戶憑證檔案
+service_principal_file	服務主體憑證檔案
+service_principal_name	服務主體名稱
+session_id	工作階段識別碼
+session_token	臨時工作階段權杖
+set_env	傳送環境變數
+set_modtime	設定檔案修改時間
+setmtime	允許設定檔案修改時間
+sha1sum_command	計算 SHA-1 校驗值的指令
+sha256sum_command	計算 SHA-256 校驗值的指令
+share_name	共用資料夾名稱
+shared_credentials_file	共用登入憑證檔案
+shared_files	包含共用檔案
+shared_folder	共用資料夾
+shared_folders	包含共用資料夾
+shared_with_me	與我共用的項目
+shell_type	遠端命令環境類型
+show_all_exports	顯示所有匯出格式
+show_all_gdocs	顯示所有 Google 文件
+show_mapping	顯示名稱對應
+shut_timeout	關閉服務逾時
+sign_accept_encoding	簽署內容編碼標頭
+site	網站名稱
+size_as_quota	以檔案大小作為空間配額
+skip_checksum_gphotos	略過 Google 相簿校驗值
+skip_dangling_shortcuts	略過無效捷徑
+skip_exports	略過需要匯出的檔案
+skip_gdocs	略過 Google 文件
+skip_hash_validation	略過雜湊驗證
+skip_links	略過連結
+skip_project_folders	略過專案資料夾
+skip_shared_folders	略過共用資料夾
+skip_shortcuts	略過捷徑
+skip_specials	略過特殊檔案
+skip_unowned_folders	略過非本人擁有的資料夾
+socks_proxy	SOCKS 代理伺服器
+speedup_enable	啟用傳輸加速
+speedup_file_patterns	需要加速的檔案篩選規則
+speedup_max_disk	加速磁碟快取上限
+speedup_max_memory	加速記憶體上限
+spn	Kerberos 服務主體名稱
+spoof_ua	相容性用戶端識別字串
+sse_customer_algorithm	自訂伺服器端加密演算法
+sse_customer_key	自訂伺服器端加密金鑰
+sse_customer_key_base64	Base64 格式的自訂加密金鑰
+sse_customer_key_file	自訂伺服器端加密金鑰檔案
+sse_customer_key_md5	自訂加密金鑰 MD5 校驗值
+sse_customer_key_sha256	自訂加密金鑰 SHA-256 校驗值
+sse_kms_key_id	KMS 加密金鑰識別碼
+ssh	SSH 程式位置
+starred_only	只顯示已加星號的項目
+start_from	清單起始位置
+start_year	起始年份
+stop_on_download_limit	達到下載限制時停止
+stop_on_upload_limit	達到上傳限制時停止
+storage_class	儲存類別
+storage_policy	儲存政策
+storage_tier	儲存層級
+storage_url	儲存服務網址
+strict_names	嚴格檢查名稱
+sts_endpoint	STS 臨時憑證服務網址
+subsystem	SSH 子系統
+suffix	檔名後綴
+team_drive	Google 共用雲端硬碟識別碼
+tenant_domain	租用戶網域
+tenant_id	租用戶識別碼
+tenant_url	租用戶服務網址
+test_mode	測試模式
+time_type	檔案時間類型
+tls_cache_size	TLS 工作階段快取大小
+tmp_upload_path	暫存上傳路徑
+tmp_wait_time	暫存檔案等待時間
+token_expiry	權杖到期時間
+tpslimit	每秒交易數量上限
+tpslimit_burst	短時間交易數量上限
+transactions	允許交易操作
+trashed_only	只顯示垃圾桶項目
+trust_token	受信任裝置權杖
+unicode_normalization	Unicode 名稱正規化方式
+unix_socket	Unix 通訊端位置
+upload_concurrency	同時上傳數量
+upload_cutoff	切換分段上傳的檔案大小
+upload_prefix	上傳路徑前綴
+upload_preset	上傳預設組
+upload_resume_limit	接續上傳大小限制
+upload_tags	上傳檔案標籤
+upload_wait	上傳後等待時間
+use_accelerate_endpoint	使用加速服務端點
+use_accept_encoding_gzip	接受 Gzip 壓縮回應
+use_already_exists	使用項目已存在的判斷
+use_arn_region	使用 ARN 指定的區域
+use_arrow_list	使用箭號式目錄清單
+use_az	指定可用區域
+use_copy_blob	使用伺服器端 Blob 複製
+use_created_date	使用檔案建立時間
+use_data_integrity_protections	啟用資料完整性保護
+use_dual_stack	同時使用 IPv4 與 IPv6
+use_emulator	連線到模擬服務
+use_fstat	使用檔案控制代碼查詢資訊
+use_https	使用 HTTPS 加密連線
+use_insecure_cipher	允許較舊的 SSH 加密方式
+use_kerberos	使用 Kerberos 驗證
+use_msi	使用受控身分登入
+use_multipart_etag	使用分段上傳 ETag
+use_multipart_uploads	使用分段上傳
+use_presigned_request	使用預先簽署的請求
+use_segments_container	使用分段儲存容器
+use_shared_date	使用共用日期
+use_trash	刪除時移至垃圾桶
+use_unsigned_payload	不簽署請求內容
+use_x_id	加入請求識別參數
+user_agent	用戶端識別字串
+user_id	使用者識別碼
+user_project	使用者計費專案
+v2_auth	使用第二版驗證
+v2_download_min_size	第二版下載方式的最小檔案大小
+vendor	服務類型
+version	指定版本
+version_at	指定時間點的版本
+version_deleted	包含已刪除版本
+versions	顯示檔案歷史版本
+wait_archive	等待封存作業完成
+web_token	網頁存取權杖
+workers	背景工作數量
+workspace_id	工作空間識別碼
+writes	允許寫入
+writing_mdtm	使用 FTP 指令設定修改時間
+xxh128sum_command	計算 XXH128 校驗值的指令
+xxh3sum_command	計算 XXH3 校驗值的指令
+zero_size_links	將連結大小顯示為零
+zone	服務區域

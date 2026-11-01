@@ -1,0 +1,63 @@
+name: Build
+
+on:
+  push:
+  pull_request_target:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: xcode-27
+    env:
+      DERIVED_DATA_PATH: 'DerivedData'
+      DEVICE: 'iPhone 17'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Disable shallow clone for SonarCloud analysis
+          # https://docs.sonarsource.com/sonarqube-cloud/advanced-setup/ci-based-analysis/github-actions-for-sonarcloud
+          fetch-depth: 0
+      - name: Select Xcode
+        run: |
+          sudo xcode-select -s "/Applications/Xcode_$(cat .xcode-version).app"
+          xcodebuild -version
+      - name: Install SwiftFormat and SwiftLint
+        run: |
+          brew update
+          brew install swiftformat swiftlint
+      - name: Run process.sh script
+        run: |
+          ./Scripts/process.sh
+          exit $?
+      - name: Build and test
+        run: set -o pipefail && env NSUnbufferedIO=YES xcodebuild -scheme 'CryptomatorCryptoLib' -destination "name=$DEVICE" -derivedDataPath $DERIVED_DATA_PATH -enableCodeCoverage YES clean test | xcbeautify
+      - name: Check for memory leaks
+        run: ./Scripts/check-leaks.sh
+        timeout-minutes: 15
+      - name: Generate coverage report
+        run: |
+          xcresult_path=$(find $DERIVED_DATA_PATH/Logs/Test -name "*.xcresult" | head -n 1)
+          bash Scripts/xccov-to-sonarqube-generic.sh "$xcresult_path" > sonarqube-generic-coverage.xml
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        continue-on-error: true
+
+  release:
+    name: Deploy and draft a release
+    runs-on: macos-latest
+    needs: build
+    permissions:
+      contents: write # Required for drafting the release
+    if: startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Draft release
+        run: |
+          gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --draft --title "$GITHUB_REF_NAME" --notes ":construction: Work in Progress"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

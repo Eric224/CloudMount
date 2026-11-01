@@ -1,0 +1,223 @@
+[![Swift Compatibility](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fcryptomator%2Fcryptolib-swift%2Fbadge%3Ftype%3Dswift-versions)](https://swiftpackageindex.com/cryptomator/cryptolib-swift)
+[![Platform Compatibility](https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fcryptomator%2Fcryptolib-swift%2Fbadge%3Ftype%3Dplatforms)](https://swiftpackageindex.com/cryptomator/cryptolib-swift)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cryptomator_cryptolib-swift&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cryptomator_cryptolib-swift)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=cryptomator_cryptolib-swift&metric=coverage)](https://sonarcloud.io/summary/new_code?id=cryptomator_cryptolib-swift)
+
+# CryptoLib Swift
+
+This library contains all cryptographic functions that are used by Cryptomator for iOS. The purpose of this project is to provide a separate light-weight library with its own release cycle that can be used in other projects, too.
+
+For more information on the Cryptomator encryption scheme, visit the security architecture page on [docs.cryptomator.org](https://docs.cryptomator.org/en/1.6/security/architecture/).
+
+## Requirements
+
+- iOS 15.0 or higher
+- macOS 12.0 or higher
+- Swift 6.2 (Xcode 26) or newer
+
+## Installation
+
+### Swift Package Manager
+
+You can use [Swift Package Manager](https://swift.org/package-manager/ "Swift Package Manager").
+
+```swift
+.package(url: "https://github.com/cryptomator/cryptolib-swift.git", .upToNextMinor(from: "3.0.0"))
+```
+
+## Usage
+
+### Masterkey
+
+`Masterkey` is a class that only contains the key material for AES encryption/decryption and MAC authentication. 
+
+#### Factory
+
+This will create a new masterkey with secure random bytes.
+
+```swift
+let masterkey = try Masterkey.createNew()
+```
+
+Another way is to create a masterkey from raw bytes.
+
+```swift
+let rawKey = ... // 64 bytes: AES master key followed by MAC master key
+let masterkey = try Masterkey.createFromRaw(rawKey: rawKey)
+```
+
+The masterkey keeps its own copy of `rawKey` and wipes it when the masterkey is deallocated. It never retains your `rawKey`, so wiping it is your responsibility. The same applies to `masterkey.rawKey`, which returns a copy that the library cannot wipe.
+
+### MasterkeyFile
+
+`MasterkeyFile` is a representation of the masterkey file. With that, you can unlock a masterkey file (and get a `Masterkey`), lock a masterkey file (and serialize it as JSON), or change the passphrase.
+
+#### Factory
+
+Create a masterkey file with content provided either from URL:
+
+```swift
+let url = ...
+let masterkeyFile = try MasterkeyFile.withContentFromURL(url: url)
+```
+
+Or from JSON data:
+
+```swift
+let data = ...
+let masterkeyFile = try MasterkeyFile.withContentFromData(data: data)
+```
+
+#### Unlock
+
+When you have a masterkey file, you can attempt an unlock. When successful, it unwraps the stored encryption and MAC keys into the masterkey, which can be used for the cryptor.
+
+```swift
+let masterkeyFile = ...
+let passphrase = ...
+let pepper = ... // optional
+let masterkey = try masterkeyFile.unlock(passphrase: passphrase, pepper: pepper)
+```
+
+The unlock process can also be performed in two steps:
+
+```swift
+let masterkeyFile = ...
+let passphrase = ...
+let pepper = ... // optional
+let kek = try masterkeyFile.deriveKey(passphrase: passphrase, pepper: pepper)
+let masterkey = try masterkeyFile.unlock(kek: kek)
+```
+
+This is useful if you'd like to derive the key in an extra step since the function is memory-intensive (using scrypt). The result can then be used elsewhere, e.g. in a memory-restricted process.
+
+The KEK returned by `deriveKey` belongs to you, and the library cannot wipe it. `unlock(kek:)` copies the KEK without retaining it, so wiping `kek` is your responsibility.
+
+#### Lock
+
+For persisting the masterkey, use this method to export its encrypted/wrapped masterkey and other metadata as JSON data.
+
+```swift
+let masterkey = ...
+let vaultVersion = ...
+let passphrase = ...
+let pepper = ... // optional
+let scryptCostParam = ... // optional
+let data = try MasterkeyFile.lock(masterkey: masterkey, vaultVersion: vaultVersion, passphrase: passphrase, pepper: pepper, scryptCostParam: scryptCostParam)
+```
+
+#### Change Passphrase
+
+The masterkey can be re-encrypted with a new passphrase.
+
+```swift
+let masterkeyFileData = ...
+let oldPassphrase = ...
+let newPassphrase = ...
+let pepper = ... // optional
+let scryptCostParam = ... // optional
+let newMasterkeyFileData = try MasterkeyFile.changePassphrase(masterkeyFileData: masterkeyFileData, oldPassphrase: oldPassphrase, newPassphrase: newPassphrase, pepper: pepper, scryptCostParam: scryptCostParam)
+```
+
+### Cryptor
+
+`Cryptor` is the core class for cryptographic operations on Cryptomator vaults.
+
+#### Constructor
+
+Create a cryptor by providing a masterkey and a scheme (e.g., `.sivGcm`).
+
+```swift
+let masterkey = ...
+let scheme = ...
+let cryptor = Cryptor(masterkey: masterkey, scheme: scheme)
+```
+
+Make sure that the data you're working with is compatible with the provided scheme.
+
+#### Path Encryption and Decryption
+
+Encrypt the directory ID in order to determine the encrypted directory URL.
+
+```swift
+let cryptor = ...
+let dirId = ...
+let encryptedDirId = try cryptor.encryptDirId(dirId)
+```
+
+Encrypt and decrypt filenames by providing a directory ID.
+
+```swift
+let cryptor = ...
+let filename = ...
+let dirId = ...
+let ciphertextName = try cryptor.encryptFileName(filename, dirId: dirId)
+let cleartextName = try cryptor.decryptFileName(ciphertextName, dirId: dirId)
+```
+
+#### File Content Encryption and Decryption
+
+Encrypt and decrypt file content via URLs. Both methods run off the caller's actor. Cancelling the calling Task throws `CancellationError`. If a call fails or is cancelled, any partially written output file is left for you to delete.
+
+To observe progress, pass a dedicated `Progress`. The method resets its unit counts when the call starts and sets them itself, so don't modify them during the call. It is completed on success.
+
+```swift
+let cryptor = ...
+let fileURL = ...
+let ciphertextURL = ...
+let cleartextURL = ...
+let overallProgress = Progress(totalUnitCount: 1)
+let encryptProgress = Progress(totalUnitCount: 0, parent: overallProgress, pendingUnitCount: 1)
+try await cryptor.encryptContent(from: fileURL, to: ciphertextURL, progress: encryptProgress)
+try await cryptor.decryptContent(from: ciphertextURL, to: cleartextURL)
+```
+
+#### File Size Calculation
+
+Determine the cleartext and ciphertext sizes in O(1).
+
+```swift
+let cryptor = ...
+let size = ...
+let ciphertextSize = cryptor.calculateCiphertextSize(size)
+let cleartextSize = try cryptor.calculateCleartextSize(ciphertextSize)
+```
+
+## Contributing
+
+Please read our [contribution guide](.github/CONTRIBUTING.md), if you would like to report a bug, ask a question or help us with coding.
+
+In general, the following preference is used to choose the implementation of cryptographic primitives:
+
+1. Apple CryptoKit (AES-GCM)
+2. Apple CommonCrypto (AES-CTR, AES-ECB for AES-SIV, HMAC, SHA-1, RFC 3394 Key Wrap)
+3. Vendored C code from Tarsnap (scrypt)
+
+This project uses [SwiftFormat](https://github.com/nicklockwood/SwiftFormat) and [SwiftLint](https://github.com/realm/SwiftLint) to enforce code style and conventions. Install these tools if you haven't already.
+
+Please make sure that your code is correctly formatted and passes linter validations. The easiest way to do that is to set up a pre-commit hook. Create a file at `.git/hooks/pre-commit` with this content:
+
+```sh
+./Scripts/process.sh --staged
+exit $?
+```
+
+And make your pre-commit hook executable:
+
+```sh
+chmod +x .git/hooks/pre-commit
+```
+
+To check for memory leaks, such as an unreleased CommonCrypto cryptor, run the test suite on macOS under `leaks` with this script. It fails when `leaks` reports a leak or a test fails. CI runs it too:
+
+```sh
+./Scripts/check-leaks.sh
+```
+
+## Code of Conduct
+
+Help us keep Cryptomator open and inclusive. Please read and follow our [Code of Conduct](.github/CODE_OF_CONDUCT.md).
+
+## License
+
+This project is dual-licensed under the AGPLv3 for FOSS projects as well as a commercial license derived from the LGPL for independent software vendors and resellers. If you want to use this library in applications that are *not* licensed under the AGPL, feel free to contact our [sales team](https://cryptomator.org/enterprise/).

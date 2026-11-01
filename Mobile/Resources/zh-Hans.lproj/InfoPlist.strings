@@ -1,0 +1,3 @@
+"Lock vault" = "上锁保险库";
+"Unlock vault" = "解锁保险库";
+"NSLocalNetworkUsageDescription" = "CloudMount 需要连接你选择的局域网 NAS 或存储服务器。";

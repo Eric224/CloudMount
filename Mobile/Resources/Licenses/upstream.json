@@ -1,0 +1,12 @@
+{
+  "CryptomatorCryptoLib": {
+    "source": "https://github.com/cryptomator/cryptolib-swift",
+    "revision": "a38b4f8b8d8977fe8fb984bff7776baa4f15fbdc"
+  },
+  "CryptomatorDesktopRecoveryWords": {
+    "source": "https://github.com/cryptomator/cryptomator",
+    "revision": "248be3411f0dce97844c2254f12a7289ee93ea3d",
+    "path": "src/main/resources/i18n/4096words_en.txt",
+    "license": "GPL-3.0"
+  }
+}

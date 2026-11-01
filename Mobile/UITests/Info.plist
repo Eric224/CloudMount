@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleDisplayName</key>
+	<string>CloudMount</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>zh-Hant</string>
+		<string>zh-Hans</string>
+	</array>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.4.12</string>
+	<key>CFBundleVersion</key>
+	<string>18</string>
+	<key>CloudMountDeveloper</key>
+	<string>俊宇</string>
+	<key>CloudMountEmail</key>
+	<string>naoki@duck.com</string>
+	<key>CloudMountKeychainGroup</key>
+	<string>Q7K9XTM528.com.codex.cloudmount.mobile.shared</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>CloudMount connects to the NAS or storage server you choose on your local network.</string>
+</dict>
+</plist>
